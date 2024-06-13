@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zdrapka na telefon</title>
+    <style>
+        #scratchCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+        #container {
+            position: relative;
+            width: 860px;
+            height: 1560px;
+            margin: auto;
+            overflow: hidden;
+        }
+        img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <img src="IMG_2817.JPG" alt="Zdjęcie pod spodem">
+        <canvas id="scratchCanvas" width="860" height="1560"></canvas>
+    </div>
+    <script>
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.src = '19FCC03A-2E7D-456A-86BA-F4D8E2587DBD.PNG';
+
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = 'destination-out';
+        };
+
+        let isDrawing = false;
+
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+
+        function getTouchPos(canvas, touch) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: touch.touches[0].clientX - rect.left,
+                y: touch.touches[0].clientY - rect.top
+            };
+        }
+
+        function draw(evt) {
+            if (!isDrawing) return;
+            evt.preventDefault();
+            let pos = evt.type.includes('touch') ? getTouchPos(canvas, evt) : getMousePos(canvas, evt);
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 20, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        canvas.addEventListener('mousedown', (e) => { isDrawing = true; draw(e); });
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => { isDrawing = false; });
+        canvas.addEventListener('touchstart', (e) => { isDrawing = true; draw(e); });
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', () => { isDrawing = false; });
+    </script>
+</body>
+</html>
+
+
